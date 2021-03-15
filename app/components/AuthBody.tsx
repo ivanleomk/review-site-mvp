@@ -60,12 +60,15 @@ const AuthBody: FC<AuthBodyProps> = ({
     switch (userAction) {
       case "SIGN_UP": {
         handleSignUp(FormData, toast);
+        break;
       }
       case "SUBMIT_CONFIRMATION_CODE": {
         handleConfirmationCode(FormData, toast);
+        break;
       }
       case "LOGIN": {
         handleSignIn(FormData, toast, updateUser, postAuthentication);
+        break;
       }
       default:
         return;

@@ -25,7 +25,7 @@ export const usePosts = () => {
 export const PostProvider = (props) => {
   const [posts, setPosts] = useState(initialPostArg);
   const { data, loading, error } = useQuery(GET_ALL_POSTS, {
-    pollInterval: 3000,
+    pollInterval: 300000000,
   });
 
   useEffect(() => {

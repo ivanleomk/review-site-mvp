@@ -15,6 +15,7 @@ export type UserContextType = {
   openAuthModal: () => void | null;
   closeAuthModal: () => void | null;
   setUser: () => void | null;
+  resetUser: () => void | null;
 };
 
 const initialUserArg: UserData = {
@@ -31,6 +32,7 @@ export const UserContext = createContext<UserContextType>({
   openAuthModal: null,
   closeAuthModal: null,
   setUser: null,
+  resetUser: null,
 });
 
 export const useUsers = () => {
@@ -43,19 +45,31 @@ export const useUsers = () => {
 
 export const UserProvider = (props) => {
   const [user, setUser] = useState(initialUserArg);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    setIsAuthenticated(user != initialUserArg);
+  }, [user]);
+
   const {
     isOpen: isAuthOpen,
     onOpen: openAuthModal,
     onClose: closeAuthModal,
   } = useDisclosure();
 
+  const resetUser = () => {
+    setUser(initialUserArg);
+    setIsAuthenticated(false);
+  };
+
   const sharedState = {
     user,
-    isAuthenticated: false,
+    isAuthenticated,
     isAuthOpen,
     openAuthModal,
     closeAuthModal,
     setUser,
+    resetUser,
   };
 
   return <UserContext.Provider value={sharedState} {...props} />;

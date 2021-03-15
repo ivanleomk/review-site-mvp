@@ -157,6 +157,7 @@ export const handleSignUp = (formData, toast) => {
           );
         })
         .catch((err) => {
+          console.log(err);
           if (
             err.message ==
             "User cannot be confirmed. Current status is CONFIRMED"
@@ -165,14 +166,22 @@ export const handleSignUp = (formData, toast) => {
               "Error encountered!",
               "Email address has already been confirmed"
             );
+          } else if ((err.code = "UsernameExistsException")) {
+            produceWarningToast(
+              "Error encountered",
+              "User has already been registered. Either confirm your email or sign in."
+            );
+          } else {
+            produceWarningToast(toast, "Error!", err.message);
           }
-          produceWarningToast(toast, "Error!", err.message);
         });
     })
     .catch((err) => {
       produceWarningToast(toast, "Error encountered", err.message);
     });
 };
+
+// TODO: Convert Auth Library to a promise based function such that we can do redirects on the client side
 
 export const handleConfirmationCode = (formData, toast) => {
   const { username, confirmation_code } = formData;
@@ -211,8 +220,6 @@ export const handleSignIn = (formData, toast, updateUser, postAuth) => {
       const jwtToken = authUser.signInUserSession.idToken.jwtToken;
       const userName = authUser.username;
 
-      console.log(jwtToken);
-
       const cognitoGroup =
         authUser.signInUserSession.accessToken.payload["cognito:groups"];
       const userPermissions = cognitoGroup ? "ADMIN" : "CUSTOMER";
@@ -226,4 +233,16 @@ export const handleSignIn = (formData, toast, updateUser, postAuth) => {
       }
     })
     .catch((err) => produceWarningToast(toast, "Warning!", err.message));
+};
+
+export const signOut = () => {
+  return new Promise((resolve, reject) => {
+    try {
+      const res = Auth.signOut({ global: true });
+
+      resolve(res);
+    } catch (error) {
+      reject(error);
+    }
+  });
 };

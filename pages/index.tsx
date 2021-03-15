@@ -10,7 +10,6 @@ import styles from "../styles/Home.module.css";
 
 export default function Home() {
   const { posts } = usePosts();
-  console.log(posts);
 
   return <HeaderFixed>This is a body paragraph</HeaderFixed>;
 }

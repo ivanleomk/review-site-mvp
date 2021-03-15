@@ -17,6 +17,7 @@ import { UserProvider } from "../app/context/UserContext";
 // Amplify Imports
 import Amplify from "aws-amplify";
 import config from "../src/aws-exports";
+import CustomerProtectedRoute from "../app/HOC/customerProtectedRoutes";
 Amplify.configure({
   ...config,
   ssr: true,
@@ -33,7 +34,9 @@ function MyApp({ Component, pageProps }: AppProps) {
       <ChakraProvider>
         <UserProvider>
           <PostProvider>
-            <Component {...pageProps} />
+            <CustomerProtectedRoute>
+              <Component {...pageProps} />
+            </CustomerProtectedRoute>
           </PostProvider>
         </UserProvider>
       </ChakraProvider>
