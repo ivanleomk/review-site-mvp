@@ -5,8 +5,7 @@ const { IMAGE_LAMBDA_URL } = routes;
 
 const Image = axios.create({
   baseURL: IMAGE_LAMBDA_URL,
-  timeout: 1000,
-  //   headers: { "X-Custom-Header": "foobar" },
+  timeout: 3000,
 });
 
 export default Image;

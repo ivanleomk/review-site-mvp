@@ -42,17 +42,10 @@ const UserPostForm = () => {
     data.append("file", file);
     data.append("", "");
 
-    var config = {
-      method: "post",
-      url:
-        "https://42fm32eia7.execute-api.ap-southeast-1.amazonaws.com/test/upload",
-
-      data: data,
-    };
-
-    axios(config)
-      .then((res) => {
-        console.log(res);
+    Image.post("/", data)
+      .then(({ data }) => {
+        const { originalUrl } = data;
+        console.log(originalUrl);
       })
       .catch(function (error) {
         console.log(error);
