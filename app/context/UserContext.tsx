@@ -72,7 +72,7 @@ export const UserProvider = (props) => {
       Auth.currentSession().then((res) => {
         console.log("Getting current Auth Session");
         let headers = {};
-        let newToken = res.idToken.jwtToken;
+        let newToken = res.getIdToken().getJwtToken();
 
         headers["x-hasura-role"] = user.userPermissions;
         headers["Authorization"] = `Bearer ${newToken}`;
