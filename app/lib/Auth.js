@@ -1,6 +1,9 @@
 import { useToast } from "@chakra-ui/toast";
 import { Auth } from "aws-amplify";
 import { request, gql, GraphQLClient } from "graphql-request";
+import { UserRoles } from "../../@types/userAuth";
+
+const { ADMIN, CUSTOMER } = UserRoles;
 
 const produceWarningToast = (toast, title, description) => {
   toast({
@@ -212,7 +215,7 @@ export const handleConfirmationCode = (formData, toast) => {
 
 export const handleSignIn = (formData, toast, updateUser, postAuth) => {
   const { username, password } = formData;
-  console.log("Signing in now!");
+
   signIn(username, password)
     .then((authUser) => {
       updateCustomerStatus(username, "CONFIRMED");
@@ -222,8 +225,12 @@ export const handleSignIn = (formData, toast, updateUser, postAuth) => {
 
       const cognitoGroup =
         authUser.signInUserSession.accessToken.payload["cognito:groups"];
-      const userPermissions = cognitoGroup ? "ADMIN" : "CUSTOMER";
+      const userPermissions = cognitoGroup ? ADMIN : CUSTOMER;
       const userData = { userEmail, jwtToken, userPermissions, userName };
+
+      localStorage.setItem("cognito_role", userPermissions);
+      localStorage.setItem("cognito_email", userEmail);
+      localStorage.setItem("cognito_username", userName);
 
       updateUser(userData);
       console.log("Succesfully authenticated!");

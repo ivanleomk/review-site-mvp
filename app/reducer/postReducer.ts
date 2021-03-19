@@ -19,25 +19,16 @@ export function PostReducer<PostFormType, PostFormActions>(state, action) {
       const { photo } = action.payload;
       return {
         ...state,
-        photos: state.photos.concat(photo),
+        photos: [photo],
       };
     }
-    //   case userAuthFormActions.UPDATE_EMAIL: {
-    //     const new_email = action.payload.data;
-    //     return { ...state, email: new_email };
-    //   }
-    //   case userAuthFormActions.UPDATE_PASSWORD: {
-    //     const new_password = action.payload.data;
-    //     return { ...state, password: new_password };
-    //   }
-    //   case userAuthFormActions.UPDATE_USERNAME: {
-    //     const new_username = action.payload.data;
-    //     return { ...state, username: new_username };
-    //   }
-    //   case userAuthFormActions.UPDATE_CONFIRMATION_CODE: {
-    //     const new_confirmation_code = action.payload.data;
-    //     return { ...state, confirmation_code: new_confirmation_code };
-    //   }
+    case PostFormActions.MODIFY_LINK: {
+      const { link } = action.payload;
+      return {
+        ...state,
+        link,
+      };
+    }
     default: {
       return state;
     }

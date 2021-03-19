@@ -25,6 +25,10 @@ const HeaderButton = () => {
           duration: 2000,
           isClosable: true,
         });
+        localStorage.removeItem("cognito_token");
+        localStorage.removeItem("cognito_role");
+        localStorage.removeItem("cognito_email");
+        localStorage.removeItem("cognito_username");
       })
       .catch((err) =>
         toast({

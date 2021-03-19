@@ -1,16 +1,18 @@
 import { useQuery } from "@apollo/client";
 import { createContext, useContext, useEffect, useState } from "react";
-import GET_ALL_POSTS from "../queries/getAllPosts.graphql";
+import GET_ALL_REVIEWS from "../queries/getAllReviews.graphql";
+import { useUsers } from "./UserContext";
+
+// const initialPostArg: Post[] = [];
+const initialReviewArg: Review[] = [];
 
 export type PostContextType = {
-  posts: Post[];
+  reviews: Review[];
   loading: boolean;
 };
 
-const initialPostArg: Post[] = [];
-
 export const PostContext = createContext<PostContextType>({
-  posts: initialPostArg,
+  reviews: [],
   loading: false,
 });
 
@@ -23,20 +25,27 @@ export const usePosts = () => {
 };
 
 export const PostProvider = (props) => {
-  const [posts, setPosts] = useState(initialPostArg);
-  const { data, loading, error } = useQuery(GET_ALL_POSTS, {
-    pollInterval: 300000000,
+  // const [posts, setPosts] = useState(initialPostArg);
+  const [reviews, setReviews] = useState(initialReviewArg);
+  const { headers } = useUsers();
+  const { data, loading, error } = useQuery(GET_ALL_REVIEWS, {
+    pollInterval: 3000,
+    context: { headers },
   });
 
   useEffect(() => {
-    if (data && data.post) {
-      const { post: posts } = data;
-      setPosts(posts);
+    if (data) {
+      console.log(data);
+      const { review: reviews } = data;
+      setReviews(reviews);
+
+      // const { post: posts } = data;
+      // setPosts(posts);
     }
   }, [loading]);
 
   const sharedState = {
-    posts,
+    reviews,
     loading,
   };
 

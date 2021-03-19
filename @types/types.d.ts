@@ -27,12 +27,25 @@ interface Like {
   customer_username: String;
 }
 
-interface Post {
+// interface Post {
+//   customer_username: string;
+//   description: string;
+//   title: string;
+//   comments: Comment[];
+//   tags: Tag[];
+//   liked: LikeItem;
+//   likes: Like[];
+// }
+
+interface Picture {
+  picture_url: string;
+}
+
+interface Review {
+  review_id: number;
   customer_username: string;
-  description: string;
-  title: string;
-  comments: Comment[];
-  tags: Tag[];
-  liked: LikeItem;
-  likes: Like[];
+  pictures: Picture[];
+  review_link: string;
+  review_price: float;
+  review_title: string;
 }

@@ -2,8 +2,9 @@
 import type { AppProps } from "next/app";
 
 // Apollo Client Imports
-import { ApolloClient, InMemoryCache } from "@apollo/client";
 import { ApolloProvider } from "@apollo/client";
+import { ApolloClient, createHttpLink, InMemoryCache } from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
 
 // Library Imports
 import { ChakraProvider } from "@chakra-ui/react";
@@ -18,29 +19,36 @@ import { UserProvider } from "../app/context/UserContext";
 import Amplify from "aws-amplify";
 import config from "../src/aws-exports";
 import CustomerProtectedRoute from "../app/HOC/customerProtectedRoutes";
+import { routes } from "../@types/applicationRoutes";
+import ApolloWrapper from "../app/HOC/ApolloWrapper";
 Amplify.configure({
   ...config,
   ssr: true,
 });
 
-const client = new ApolloClient({
-  uri: "https://server.makanreviews.com/v1/graphql",
-  cache: new InMemoryCache(),
-});
+// const httpLink = createHttpLink({
+//   uri: routes.SERVER_PAGE,
+// });
+
+// // Apollo Client Init
+// const client = new ApolloClient({
+//   uri: "https://server.makanreviews.com/v1/graphql",
+//   cache: new InMemoryCache(),
+// });
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <ApolloProvider client={client}>
-      <ChakraProvider>
-        <UserProvider>
+    <ChakraProvider>
+      <UserProvider>
+        <ApolloWrapper>
           <PostProvider>
             <CustomerProtectedRoute>
               <Component {...pageProps} />
             </CustomerProtectedRoute>
           </PostProvider>
-        </UserProvider>
-      </ChakraProvider>
-    </ApolloProvider>
+        </ApolloWrapper>
+      </UserProvider>
+    </ChakraProvider>
   );
 }
 

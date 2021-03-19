@@ -8,7 +8,7 @@ const HeaderFixed = ({ children }) => {
     <div className="flex flex-col h-screen">
       <header className="py-5 flex-col text-center px-4">
         <div className="flex justify-between items-center">
-          <h1 className="text-xl">Makan</h1>
+          <h1 className="text-xl">Unbox</h1>
           <div>
             <HeaderButton />
             <AuthPopup />

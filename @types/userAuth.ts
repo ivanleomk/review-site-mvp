@@ -50,4 +50,9 @@ export type UserDetail =
   | UserDetails.USERNAME
   | UserDetails.CONFIRMATION_CODE;
 
-export type UserRole = "ADMIN" | "CUSTOMER";
+export enum UserRoles {
+  ADMIN = "admin",
+  CUSTOMER = "customer",
+}
+
+export type UserRole = UserRoles.ADMIN | UserRoles.CUSTOMER;

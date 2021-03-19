@@ -1,0 +1,12 @@
+query {
+  review {
+    customer_username
+    review_id
+    review_link
+    review_price
+    review_title
+    pictures {
+      picture_url
+    }
+  }
+}

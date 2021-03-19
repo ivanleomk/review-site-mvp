@@ -1,0 +1,21 @@
+mutation(
+  $customer_username: String!
+  $review_details: String!
+  $review_link: String!
+  $review_price: Float!
+  $picture_url: String!
+  $review_title: String!
+) {
+  insert_review(
+    objects: {
+      customer_username: $customer_username
+      review_details: $review_details
+      review_link: $review_link
+      review_price: $review_price
+      review_title: $review_title
+      pictures: { data: { picture_url: $picture_url } }
+    }
+  ) {
+    affected_rows
+  }
+}

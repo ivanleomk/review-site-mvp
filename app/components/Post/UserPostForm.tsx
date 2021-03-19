@@ -5,27 +5,58 @@ import CreatableSelect from "react-select/creatable";
 import Image from "../../api/Image";
 import axios from "axios";
 import { routes } from "../../../@types/applicationRoutes";
+import { useMutation } from "@apollo/client";
+import ADD_NEW_REVIEW from "../../queries/addReview.graphql";
+import { useUsers } from "../../context/UserContext";
+import { toast } from "@aws-amplify/ui";
+import { useToast } from "@chakra-ui/toast";
+import { useRouter } from "next/router";
+import Auth from "@aws-amplify/auth";
 
 const initialPostArg = {
   title: "",
   price: 0.0,
   description: "",
   photos: [],
+  link: "",
 };
 
 const UserPostForm = () => {
   const [formData, dispatch] = useReducer(PostReducer, initialPostArg);
+  const toast = useToast();
+  const router = useRouter();
+
+  const [
+    addReview,
+    // { loading: mutationLoading, error: mutationError },
+  ] = useMutation(ADD_NEW_REVIEW);
+
+  const { user } = useUsers();
+
   const {
     MODIFY_TITLE,
     MODIFY_DESCRIPTION,
     MODIFY_PRICE,
     ADD_IMAGE,
+    MODIFY_LINK,
   } = PostFormActions;
 
   const handleFileSubmit = (e) => {
     const photo = e.target.files[0];
-    if (photo.type !== "image/png") {
+    if (
+      photo.type !== "image/png" &&
+      photo.type !== "image/jpg" &&
+      photo.type !== "image/jpeg"
+    ) {
       // TODO: Add Warning Toast
+      toast({
+        title: "Error.",
+        description: "We only support .png and .jpg at the moment",
+        status: "warning",
+        duration: 9000,
+        isClosable: true,
+      });
+      return;
     }
     dispatch({
       type: ADD_IMAGE,
@@ -44,8 +75,39 @@ const UserPostForm = () => {
 
     Image.post("/", data)
       .then(({ data }) => {
-        const { originalUrl } = data;
-        console.log(originalUrl);
+        const { url: picture_url } = data;
+        const { userName: customer_username } = user;
+        const {
+          title: review_title,
+          price: review_price,
+          description: review_details,
+          link: review_link,
+        } = formData;
+        console.log(picture_url);
+        const variables = {
+          customer_username,
+          review_title,
+          review_details,
+          review_link,
+          review_price,
+          picture_url,
+        };
+
+        addReview({
+          variables,
+        })
+          .then((res) => {
+            console.log(res);
+            toast({
+              title: "Review Created.",
+              description: "Thanks for submitting your new review",
+              status: "success",
+              duration: 9000,
+              isClosable: true,
+            });
+            router.push("/");
+          })
+          .catch((err) => console.log(err));
       })
       .catch(function (error) {
         console.log(error);
@@ -69,7 +131,7 @@ const UserPostForm = () => {
           <input
             id="about"
             name="about"
-            type="number"
+            type="text"
             className="focus:outline-none p-4 mt-4 border-gray-300 shadow-sm block w-full sm:text-sm  rounded-md"
             value={formData.title}
             onChange={(e) =>
@@ -95,12 +157,33 @@ const UserPostForm = () => {
             className="focus:outline-none p-4 border-gray-300 shadow-sm block w-full sm:text-sm  rounded-md"
             value={formData.price}
             onChange={(e) => {
-              console.log(e);
               dispatch({
                 type: MODIFY_PRICE,
                 payload: { price: e.target.value },
               });
             }}
+          />
+        </div>
+        <div className="sm:col-span-6">
+          <div>
+            <h3 className="text-lg leading-6 font-medium text-gray-900">
+              Link To Item
+            </h3>
+          </div>
+          <p className="mt-2 text-sm text-gray-500">Add a Link to the item</p>
+
+          <input
+            id="about"
+            name="about"
+            type="text"
+            className="focus:outline-none p-4 mt-4 border-gray-300 shadow-sm block w-full sm:text-sm  rounded-md"
+            value={formData.link}
+            onChange={(e) =>
+              dispatch({
+                type: MODIFY_LINK,
+                payload: { link: e.target.value },
+              })
+            }
           />
         </div>
         <div className="sm:col-span-6">
@@ -145,30 +228,9 @@ const UserPostForm = () => {
           </label>
         </div>
 
-        {/* <div className="sm:col-span-6">
-              <div>
-                <h3 className="text-lg leading-6 font-medium text-gray-900">
-                  Relevant Tags
-                </h3>
-              </div>
-
-              <p className="mt-2 text-sm text-gray-500">
-                Add some tags to your post so others can find it more easily!
-                (Eg. Cooking, Vegetables, Chinese)
-              </p>
-               TODO : Fix Up Tags
-               <CreatableSelect
-                classNameName="mt-4"
-                isMulti
-                options={options}
-                onChange={handleOptionChange}
-                onInputChange={handleInputChange}
-              /> 
-            </div> 
-            */}
         <button
           type="submit"
-          className=" items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          className="sm:col-span-6 items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
           Submit
         </button>
